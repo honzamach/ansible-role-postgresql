@@ -1,0 +1,50 @@
+---
+
+#
+# URL leading to GPG key for signing deb packages
+#
+hm_pgsql__apt_key_url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+
+#
+# Identifier of the signing key
+#
+hm_pgsql__apt_key_id: ACCC4CF8
+
+#
+# Location of PostgreSQL repository.
+#
+hm_pgsql__apt_repository: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_lsb['codename'] }}-pgdg main"
+
+#
+# Name of the UNIX system user for PostgreSQL database.
+#
+hm_pgsql__user: postgres
+
+#
+# Name of the UNIX system group for PostgreSQL database.
+#
+hm_pgsql__group: postgres
+
+#
+# Path to log file.
+#
+hm_pgsql__logdir: "/var/log/postgresql"
+
+#
+# Log rotation switch (true/false).
+#
+hm_pgsql__logrotate: true
+
+#
+# Log rotation options.
+#
+hm_pgsql__logrotate_options:
+  - weekly
+  - rotate 8
+  - missingok
+  - notifempty
+  - copytruncate
+  - compress
+  - delaycompress
+  - dateext
+  - su root root

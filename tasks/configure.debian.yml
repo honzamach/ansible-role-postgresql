@@ -1,0 +1,23 @@
+---
+
+- name: Configuring log file rotation
+  template:
+    src: "{{ item }}"
+    dest: /etc/logrotate.d/postgresql-common
+    owner: root
+    group: root
+    mode: "0644"
+  with_first_found:
+    - "host_files/{{ inventory_hostname }}/logrotate_postgresql-common.{{ ansible_distribution_release }}.j2"
+    - "host_files/{{ inventory_hostname }}/logrotate_postgresql-common.j2"
+    - "group_files/servers/logrotate_postgresql-common.{{ ansible_distribution_release }}.j2"
+    - "group_files/servers/logrotate_postgresql-common.j2"
+    - "logrotate_postgresql-common.{{ ansible_distribution_release }}.j2"
+    - "logrotate_postgresql-common.j2"
+  when: hm_pgsql__logrotate
+
+- name: Ensuring PostgreSQL service is running and enabled at system start
+  service:
+    name: "{{ hm_pgsql__service_name }}"
+    state: started
+    enabled: yes

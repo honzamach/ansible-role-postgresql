@@ -1,0 +1,20 @@
+galaxy_info:
+  role_name: postgresql
+  author: Jan Mach
+  description: Ansible role for convenient installation of the PostgreSQL database.
+  company: CESNET, a.l.e.
+  license: MIT
+  min_ansible_version: 2.6
+  github_branch: master
+  platforms:
+    - name: Debian
+      versions:
+        - stretch
+        - jessie
+  galaxy_tags:
+    - database
+    - postgresql
+    - postgres
+    - rdbms
+
+dependencies: []

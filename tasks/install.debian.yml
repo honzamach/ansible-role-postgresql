@@ -1,0 +1,34 @@
+---
+
+- name: Installing APT repository GPG key for PostgreSQL database
+  apt_key:
+    url: "{{ hm_pgsql__apt_key_url }}"
+    id: "{{ hm_pgsql__apt_key_id }}"
+    state: present
+
+- name: Installing APT repository list file for PostgreSQL database
+  apt_repository:
+    repo: "{{ hm_pgsql__apt_repository }}"
+    state: present
+    filename: pgsql
+    update_cache: yes
+
+- name: Installing PostgreSQL packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - postgresql-10
+    - postgresql-10-ip4r
+    - pgadmin3
+
+- name: Installing Psycopg2 from PIP (Python2)
+  pip:
+    name: psycopg2
+    state: latest
+
+- name: Installing Psycopg2 from PIP3 (Python3)
+  pip:
+    name: psycopg2
+    executable: pip3
+    state: latest
