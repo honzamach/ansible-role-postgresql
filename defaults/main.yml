@@ -62,3 +62,11 @@ hm_pgsql__logrotate_options:
   - delaycompress
   - dateext
   - su root root
+
+#-------------------------------------------------------------------------------
+
+#
+# Provide default value for Nagios NRPE service in case role honzamach.monitored
+# is not executed as well.
+#
+hm_monitored__service_name: nagios-nrpe-server
