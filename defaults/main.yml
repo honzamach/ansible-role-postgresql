@@ -16,6 +16,20 @@ hm_pgsql__apt_key_id: ACCC4CF8
 hm_pgsql__apt_repository: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_lsb['codename'] }}-pgdg main"
 
 #
+# List of role-related packages, that will be installed on target system.
+#
+hm_pgsql__package_list:
+  - postgresql-10
+  - postgresql-10-ip4r
+  - postgresql-server-dev-10
+  - pgadmin3
+
+#
+# Force APT cache update before installing any packages ('yes','no')
+#
+hm_pgsql__apt_force_update: no
+
+#
 # Name of the UNIX system user for PostgreSQL database.
 #
 hm_pgsql__user: postgres

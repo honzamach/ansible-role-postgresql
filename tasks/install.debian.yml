@@ -15,12 +15,9 @@
 
 - name: Installing PostgreSQL packages
   apt:
-    name: "{{ item }}"
+    name: "{{ hm_pgsql__package_list }}"
     state: latest
-  with_items:
-    - postgresql-10
-    - postgresql-10-ip4r
-    - pgadmin3
+    update_cache: "{{ hm_pgsql__apt_force_update }}"
 
 - name: Installing Psycopg2 from PIP (Python2)
   pip:
