@@ -22,6 +22,7 @@ hm_pgsql__package_list:
   - postgresql-10
   - postgresql-10-ip4r
   - postgresql-server-dev-10
+  - libpq-dev
   - pgadmin3
 
 #
