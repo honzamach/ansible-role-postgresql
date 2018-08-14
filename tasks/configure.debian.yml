@@ -8,11 +8,17 @@
     group: root
     mode: "0644"
   with_first_found:
-    - "host_files/{{ inventory_hostname }}/logrotate_postgresql-common.{{ ansible_distribution_release }}.j2"
+    - "host_files/{{ inventory_hostname }}/logrotate_postgresql-common.{{ ansible_lsb['codename'] }}.j2"
     - "host_files/{{ inventory_hostname }}/logrotate_postgresql-common.j2"
-    - "group_files/servers/logrotate_postgresql-common.{{ ansible_distribution_release }}.j2"
+    - "group_files/servers-production/logrotate_postgresql-common.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-production/logrotate_postgresql-common.j2"
+    - "group_files/servers-development/logrotate_postgresql-common.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-development/logrotate_postgresql-common.j2"
+    - "group_files/servers-demo/logrotate_postgresql-common.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-demo/logrotate_postgresql-common.j2"
+    - "group_files/servers/logrotate_postgresql-common.{{ ansible_lsb['codename'] }}.j2"
     - "group_files/servers/logrotate_postgresql-common.j2"
-    - "logrotate_postgresql-common.{{ ansible_distribution_release }}.j2"
+    - "logrotate_postgresql-common.{{ ansible_lsb['codename'] }}.j2"
     - "logrotate_postgresql-common.j2"
   when: hm_pgsql__logrotate
 
