@@ -22,12 +22,12 @@
 - name: Installing Psycopg2 from PIP (Python2)
   pip:
     name: psycopg2
-    state: latest
+    state: present
     extra_args: "--no-binary :all:"
 
 - name: Installing Psycopg2 from PIP3 (Python3)
   pip:
     name: psycopg2
     executable: pip3
-    state: latest
+    state: present
     extra_args: "--no-binary :all:"
