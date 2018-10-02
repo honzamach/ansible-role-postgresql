@@ -64,10 +64,20 @@ hm_pgsql__logrotate_options:
   - dateext
   - su root root
 
+#
+# Minimal number of running PostgreSQL processes for health monitoring.
+#
+hm_pgsql__procs_mincnt: 1
+
+#
+# Maximal number of running PostgreSQL processes for health monitoring.
+#
+hm_pgsql__procs_maxcnt: 100
+
 #-------------------------------------------------------------------------------
 
 #
 # Provide default value for Nagios NRPE service in case role honzamach.monitored
-# is not executed as well.
+# is not executed alongside this role.
 #
 hm_monitored__service_name: nagios-nrpe-server

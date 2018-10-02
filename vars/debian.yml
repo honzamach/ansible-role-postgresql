@@ -4,3 +4,8 @@
 # Name of the PostgreSQL service
 #
 hm_pgsql__service_name: postgresql
+
+#
+# Name of the PostgreSQL process
+#
+hm_pgsql__process_name: postgres

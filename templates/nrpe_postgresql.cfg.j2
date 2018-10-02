@@ -10,4 +10,4 @@
 #
 # Check running processes.
 #
-command[check_postgresql]=/usr/lib/nagios/plugins/check_procs -c 8:100 -C postgres
+command[check_postgresql]=/usr/lib/nagios/plugins/check_procs -c {{ hm_pgsql__procs_mincnt }}:{{ hm_pgsql__procs_maxcnt }} -C {{ hm_pgsql__process_name }}
