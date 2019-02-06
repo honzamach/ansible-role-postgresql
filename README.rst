@@ -16,7 +16,9 @@ Description
 
 This role is intended to keep the things as simple as possible and performs only
 basic installation and configuration of the PostgreSQL service. Any advanced
-configuration adjustments have to be done manually.
+configuration adjustments have to be done manually. This role installs the latest
+version 11 and can optionally remove the 10.x. The actual migration is however
+quite complex process and must be done manually.
 
 
 Requirements
@@ -56,19 +58,36 @@ that can be overriden and adjusted as needed:
 
 	URL leading to GPG key for signing deb packages
 
-	*Type:* ``string`` | *Default:* ``"https://www.postgresql.org/media/keys/ACCC4CF8.asc"``
+	* *Type:* ``string``
+	* *Default:* ``"https://www.postgresql.org/media/keys/ACCC4CF8.asc"``
 
 .. envvar:: hm_pgsql__apt_key_id
 
 	Identifier of the signing key.
 
-	*Type:* ``string`` | *Default:* ``"ACCC4CF8"``
+	* *Type:* ``string``
+	* *Default:* ``"ACCC4CF8"``
 
 .. envvar:: hm_pgsql__apt_repository
 
 	Location of PostgreSQL repository.
 
-	*Type:* ``string`` | *Default:* ``"deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_lsb['codename'] }}-pgdg main"``
+	* *Type:* ``string``
+	* *Default:* ``"deb http://apt.postgresql.org/pub/repos/apt/[ansible_lsb['codename']]-pgdg main"``
+
+.. envvar:: hm_pgsql__remove_list
+
+	List of role-related packages, that will be removed from target system.
+
+	* *Datatype:* ``list of strings``
+    * *Default:* (please see YAML file ``defaults/main.yml``)
+
+.. envvar:: hm_pgsql__apt_remove_previous
+
+	Remove previous version of PostgreSQL database (true/false).
+
+	* *Type:* ``bool``
+	* *Default:* ``false``
 
 .. envvar:: hm_pgsql__package_list
 
@@ -88,31 +107,36 @@ that can be overriden and adjusted as needed:
 
 	Name of the UNIX system user for PostgreSQL database.
 
-	*Type:* ``string`` | *Default:* ``"postgres"``
+	* *Type:* ``string``
+	* *Default:* ``"postgres"``
 
 .. envvar:: hm_pgsql__group
 
 	Name of the UNIX system group for PostgreSQL database.
 
-	*Type:* ``string`` | *Default:* ``"postgres"``
+	* *Type:* ``string``
+	* *Default:* ``"postgres"``
 
 .. envvar:: hm_pgsql__logdir
 
 	Path to log file.
 
-	*Type:* ``string`` | *Default:* ``"/var/log/postgresql"``
+	* *Type:* ``string``
+	* *Default:* ``"/var/log/postgresql"``
 
 .. envvar:: hm_pgsql__logrotate
 
 	Log rotation switch (true/false).
 
-	*Type:* ``bool`` | *Default:* ``true``
+	* *Type:* ``bool``
+	* *Default:* ``true``
 
 .. envvar:: hm_pgsql__logrotate_options
 
 	Log rotation options.
 
-	*Type:* ``list of strings``
+	* *Type:* ``list of strings``
+	* *Default:* (please see YAML file ``defaults/main.yml``)
 
 Additionally this role makes use of following built-in Ansible variables:
 
