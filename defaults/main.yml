@@ -16,17 +16,33 @@ hm_pgsql__apt_key_id: ACCC4CF8
 hm_pgsql__apt_repository: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_lsb['codename'] }}-pgdg main"
 
 #
-# List of role-related packages, that will be installed on target system.
+# List of role-related packages, that will be removed from target system.
 #
-hm_pgsql__package_list:
+hm_pgsql__remove_list:
   - postgresql-10
   - postgresql-10-ip4r
+  - postgresql-client-10
   - postgresql-server-dev-10
-  - libpq-dev
   - pgadmin3
 
 #
-# Force APT cache update before installing any packages ('yes','no')
+# Remove previous version of PostgreSQL database (true/false).
+#
+hm_pgsql__apt_remove_previous: false
+
+#
+# List of role-related packages, that will be installed on target system.
+#
+hm_pgsql__package_list:
+  - postgresql-11
+  - postgresql-11-ip4r
+  - postgresql-client-11
+  - postgresql-server-dev-11
+  - libpq-dev
+  - pgadmin4
+
+#
+# Force APT cache update before installing any packages ('yes','no').
 #
 hm_pgsql__apt_force_update: no
 

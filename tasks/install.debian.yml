@@ -13,7 +13,13 @@
     filename: pgsql
     update_cache: yes
 
-- name: Installing PostgreSQL packages
+- name: Removing PostgreSQL related packages
+  apt:
+    name: "{{ hm_pgsql__remove_list }}"
+    state: absent
+  when: hm_pgsql__apt_remove_previous
+
+- name: Installing PostgreSQL related packages
   apt:
     name: "{{ hm_pgsql__package_list }}"
     state: latest
