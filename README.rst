@@ -158,7 +158,7 @@ This role uses following foreign variables defined in other roles:
 
 :envvar:`hm_monitored__service_name`
 
-    Name of the NRPE service in case the server is in **servers-monitored**
+    Name of the NRPE service in case the server is in **servers_monitored**
     group and the playbook is automagically configuring monitoring of the Mentat
     system.
 
@@ -167,7 +167,7 @@ This role uses following foreign variables defined in other roles:
 Group memberships
 --------------------------------------------------------------------------------
 
-* **servers-monitored**
+* **servers_monitored**
 
   In case the target server is member of this group Nagios monitoring is automagically
   configured for the PostgreSQL database.
@@ -202,12 +202,12 @@ Example Playbook
 
 Example content of inventory file ``inventory``::
 
-	[servers-postgresql]
+	[servers_postgresql]
 	localhost
 
 Example content of role playbook file ``playbook.yml``::
 
-	- hosts: servers-postgresql
+	- hosts: servers_postgresql
 	  remote_user: root
 	  roles:
 	    - role: honzamach.postgresql

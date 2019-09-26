@@ -11,7 +11,7 @@
 #   git clone https://github.com/honzamach/ansible-role-postgresql.git honzamach.postgresql
 #
 
-- hosts: servers-postgresql
+- hosts: servers_postgresql
   remote_user: root
   roles:
     - role: honzamach.postgresql
