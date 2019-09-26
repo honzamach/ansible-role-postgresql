@@ -24,16 +24,3 @@
     name: "{{ hm_pgsql__package_list }}"
     state: latest
     update_cache: "{{ hm_pgsql__apt_force_update }}"
-
-- name: Installing Psycopg2 from PIP (Python2)
-  pip:
-    name: psycopg2
-    state: present
-    extra_args: "--no-binary :all:"
-
-- name: Installing Psycopg2 from PIP3 (Python3)
-  pip:
-    name: psycopg2
-    executable: pip3
-    state: present
-    extra_args: "--no-binary :all:"
