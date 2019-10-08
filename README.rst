@@ -80,7 +80,7 @@ that can be overriden and adjusted as needed:
 	List of role-related packages, that will be removed from target system.
 
 	* *Datatype:* ``list of strings``
-    * *Default:* (please see YAML file ``defaults/main.yml``)
+	* *Default:* (please see YAML file ``defaults/main.yml``)
 
 .. envvar:: hm_pgsql__apt_remove_previous
 
@@ -94,14 +94,14 @@ that can be overriden and adjusted as needed:
 	List of role-related packages, that will be installed on target system.
 
 	* *Datatype:* ``list of strings``
-    * *Default:* (please see YAML file ``defaults/main.yml``)
+	* *Default:* (please see YAML file ``defaults/main.yml``)
 
 .. envvar:: hm_pgsql__apt_force_update
 
 	Force APT cache update before installing any packages ('yes','no').
 
 	* *Datatype:* ``string``
-    * *Default:* ``no``
+	* *Default:* ``no``
 
 .. envvar:: hm_pgsql__user
 
