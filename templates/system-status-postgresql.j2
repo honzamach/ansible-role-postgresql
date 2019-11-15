@@ -6,6 +6,7 @@
 #  changes will be overwritten without any notice !!! You have been warned !!!
 #
 #----------------------- <+++ansible-managed-file+++> -------------------------+
+{%- set snippet_cleanup = " | sed 's/:/ -/' | cut -f 1 -d \\|;" %}
 
 echo "+------------------------------------------------------------------------------+"
 echo "| PostgreSQL database status                                                   |"
@@ -14,4 +15,23 @@ echo "+-------------------------------------------------------------------------
 #
 # Check running processes.
 #
-/usr/lib/nagios/plugins/check_procs -c {{ hm_pgsql__procs_mincnt }}:{{ hm_pgsql__procs_maxcnt }} -C {{ hm_pgsql__process_name }} | sed 's/:/ -/' | cut -f 1 -d \|;
+{{ hm_monitored__plugins_dir }}/check_procs -c {{ hm_pgsql__procs_mincnt }}:{{ hm_pgsql__procs_maxcnt }} -C {{ hm_pgsql__process_name }} {{ snippet_cleanup }}
+
+#
+# Common checks
+#
+{{ hm_monitored__plugins_dir }}/check_postgres_hitratio --dbuser={{ hm_pgsql__monitoring_user }} {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_query_time --dbuser={{ hm_pgsql__monitoring_user }} --warning='3 minutes' --critical='5 minutes' {{ snippet_cleanup }}
+
+{% for dbname in hm_pgsql__databases %}
+#
+# Checks for database '{{ dbname }}'.
+#
+{{ hm_monitored__plugins_dir }}/check_postgres_connection --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_backends --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_bloat --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='1G' --critical='5G' {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_last_analyze --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='3d' --critical='7d' {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_last_vacuum --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='3d' --critical='7d'  {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_last_autoanalyze --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='3d' --critical='7d' {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_last_autovacuum --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='3d' --critical='7d' {{ snippet_cleanup }}
+{% endfor %}

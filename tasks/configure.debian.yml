@@ -18,44 +18,119 @@
     - "logrotate_postgresql-common.j2"
   when: hm_pgsql__logrotate
 
-- name: Configuring Nagios monitoring
-  template:
-    src: "{{ item }}"
-    dest: /etc/nagios/nrpe.d/postgresql.cfg
-    owner: root
-    group: root
-    mode: 0644
-    backup: yes
-  with_first_found:
-    - "inventory/host_files/{{ inventory_hostname }}/honzamach.postgresql/nrpe_postgresql.cfg.j2"
-    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/nrpe_postgresql.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/nrpe_postgresql.cfg.j2"
-    - "inventory/group_files/servers/honzamach.postgresql/nrpe_postgresql.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "inventory/group_files/servers/honzamach.postgresql/nrpe_postgresql.cfg.j2"
-    - "nrpe_postgresql.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "nrpe_postgresql.cfg.j2"
-  notify: Restart NRPE service
-  when: '"servers_monitored" in group_names'
-
-- name: Configuring system status script
-  template:
-    src: "{{ item }}"
-    dest: /opt/system-status/system-status.d/20-postgresql
-    owner: root
-    group: root
-    mode: 0755
-  with_first_found:
-    - "inventory/host_files/{{ inventory_hostname }}/honzamach.postgresql/system-status-postgresql.j2"
-    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/system-status-postgresql.{{ ansible_lsb['codename'] }}.j2"
-    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/system-status-postgresql.j2"
-    - "inventory/group_files/servers/honzamach.postgresql/system-status-postgresql.{{ ansible_lsb['codename'] }}.j2"
-    - "inventory/group_files/servers/honzamach.postgresql/system-status-postgresql.j2"
-    - "system-status-postgresql.{{ ansible_lsb['codename'] }}.j2"
-    - "system-status-postgresql.j2"
-  when: '"servers_monitored" in group_names'
-
 - name: Ensuring PostgreSQL service is running and enabled at system start
   service:
     name: "{{ hm_pgsql__service_name }}"
     state: started
     enabled: yes
+
+- block:
+
+  #
+  # Resources for following section:
+  #   https://bucardo.org/check_postgres/check_postgres.pl.html
+  #   https://severalnines.com/database-blog/how-monitor-postgresql-using-nagios
+  #
+  - name: Database monitoring - Configuring Nagios monitoring
+    template:
+      src: "{{ item }}"
+      dest: /etc/nagios/nrpe.d/postgresql.cfg
+      owner: root
+      group: root
+      mode: 0644
+      backup: yes
+    with_first_found:
+      - "inventory/host_files/{{ inventory_hostname }}/honzamach.postgresql/nrpe_postgresql.cfg.j2"
+      - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/nrpe_postgresql.cfg.{{ ansible_lsb['codename'] }}.j2"
+      - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/nrpe_postgresql.cfg.j2"
+      - "inventory/group_files/servers/honzamach.postgresql/nrpe_postgresql.cfg.{{ ansible_lsb['codename'] }}.j2"
+      - "inventory/group_files/servers/honzamach.postgresql/nrpe_postgresql.cfg.j2"
+      - "nrpe_postgresql.cfg.{{ ansible_lsb['codename'] }}.j2"
+      - "nrpe_postgresql.cfg.j2"
+    notify: Restart NRPE service
+
+  - name: Database monitoring - Configuring system status script
+    template:
+      src: "{{ item }}"
+      dest: /opt/system-status/system-status.d/20-postgresql
+      owner: root
+      group: root
+      mode: 0755
+    with_first_found:
+      - "inventory/host_files/{{ inventory_hostname }}/honzamach.postgresql/system-status-postgresql.j2"
+      - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/system-status-postgresql.{{ ansible_lsb['codename'] }}.j2"
+      - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/system-status-postgresql.j2"
+      - "inventory/group_files/servers/honzamach.postgresql/system-status-postgresql.{{ ansible_lsb['codename'] }}.j2"
+      - "inventory/group_files/servers/honzamach.postgresql/system-status-postgresql.j2"
+      - "system-status-postgresql.{{ ansible_lsb['codename'] }}.j2"
+      - "system-status-postgresql.j2"
+
+  #
+  # Resources for following section:
+  #   https://gist.github.com/jirutka/afa3ce62b1430abf7572#file-pg_grant_read_to_db-sh
+  #   https://stackoverflow.com/questions/6452956/how-to-create-a-user-with-readonly-privileges-for-all-databases-in-postgresql
+  #
+  - name: "Database monitoring - Creating user '{{ hm_pgsql__monitoring_user }}'"
+    become: yes
+    become_user: "{{ hm_pgsql__user }}"
+    postgresql_user:
+      db: "{{ item }}"
+      name: "{{ hm_pgsql__monitoring_user }}"
+      password: "{{ hm_pgsql__monitoring_password }}"
+      encrypted: yes
+      priv: CONNECT
+      role_attr_flags: "NOSUPERUSER,NOCREATEROLE,NOCREATEDB,NOREPLICATION"
+      state: present
+      login_user: postgres
+    loop: "{{ ['postgres'] + hm_pgsql__databases }}"
+
+  # GRANT SELECT ON SCHEMA public TO watchdog
+  - name: "Database monitoring - Adding SELECT privileges to schema public to user '{{ hm_pgsql__monitoring_user }}'"
+    become: yes
+    become_user: "{{ hm_pgsql__user }}"
+    postgresql_privs:
+      db: "{{ item }}"
+      privs: SELECT
+      schema: public
+      objs: ALL_IN_SCHEMA
+      role: "{{ hm_pgsql__monitoring_user }}"
+      grant_option: yes
+    loop: "{{ ['postgres'] + hm_pgsql__databases }}"
+
+  # ALTER DEFAULT PRIVILEGES ON DATABASE x TO watchdog, step 1
+  - name: "Database monitoring - Adding default SELECT privileges to user '{{ hm_pgsql__monitoring_user }}'"
+    become: yes
+    become_user: "{{ hm_pgsql__user }}"
+    postgresql_privs:
+      db: "{{ item }}"
+      objs: TABLES
+      privs: SELECT
+      type: default_privs
+      role: "{{ hm_pgsql__monitoring_user }}"
+      grant_option: yes
+    loop: "{{ ['postgres'] + hm_pgsql__databases }}"
+
+  # ALTER DEFAULT PRIVILEGES ON DATABASE x TO watchdog, step 2
+  - name: "Database monitoring - Adding default USAGE privileges to user '{{ hm_pgsql__monitoring_user }}'"
+    become: yes
+    become_user: "{{ hm_pgsql__user }}"
+    postgresql_privs:
+      db: "{{ item }}"
+      objs: TYPES
+      privs: USAGE
+      type: default_privs
+      role: "{{ hm_pgsql__monitoring_user }}"
+      grant_option: yes
+    loop: "{{ ['postgres'] + hm_pgsql__databases }}"
+
+  - name: "Database monitoring - Enable passwordless local login for user '{{ hm_pgsql__monitoring_user }}'"
+    postgresql_pg_hba:
+      dest: /etc/postgresql/12/main/pg_hba.conf
+      contype: local
+      users: "{{ hm_pgsql__monitoring_user }}"
+      method: trust
+      backup: yes
+    notify:
+      - Restart PostgreSQL service
+
+  when: '"servers_monitored" in group_names'

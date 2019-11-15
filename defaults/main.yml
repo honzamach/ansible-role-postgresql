@@ -40,6 +40,8 @@ hm_pgsql__package_list:
   - postgresql-server-dev-11
   - libpq-dev
   - pgadmin4
+  - python-psycopg2
+  - python3-psycopg2
 
 #
 # Force APT cache update before installing any packages ('yes','no').
@@ -55,6 +57,21 @@ hm_pgsql__user: postgres
 # Name of the UNIX system group for PostgreSQL database.
 #
 hm_pgsql__group: postgres
+
+#
+# Name of the user account for monitoring PostgreSQL database.
+#
+hm_pgsql__monitoring_user: watchdog
+
+#
+# Password of the user account for monitoring PostgreSQL database.
+#
+hm_pgsql__monitoring_password: watchdog
+
+#
+# List of all PostgreSQL databases that should be present on target system.
+#
+hm_pgsql__databases: []
 
 #
 # Path to log file.

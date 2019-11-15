@@ -24,3 +24,51 @@
     name: "{{ hm_pgsql__package_list }}"
     state: latest
     update_cache: "{{ hm_pgsql__apt_force_update }}"
+
+- name: Look for existing installation of check_postgres Nagios plugin
+  find:
+    paths: "{{ hm_monitored__plugins_dir }}/"
+    patterns: "^check_postgres.*$"
+    use_regex: yes
+  register: reg_find_checkpostgres
+
+- block:
+
+    - name: Create temporary directory
+      file:
+        path: /tmp/check_postgres
+        state: directory
+        mode: '0755'
+        owner: root
+        group: root
+
+    - name: Download check_postgres Nagios plugin
+      unarchive:
+        src: http://bucardo.org/downloads/check_postgres.tar.gz
+        dest: /tmp/check_postgres
+        remote_src: yes
+
+    - name: Installing check_postgres to Nagios plugin directory
+      shell: "cp /tmp/check_postgres/check_postgres-*/check_postgres.pl {{ hm_monitored__plugins_dir }}/"
+      args:
+        creates: "{{ hm_monitored__plugins_dir }}/check_postgres.pl"
+
+    - name: Ensure correct permissions for check_postgres Nagios plugin
+      file:
+        path: "{{ hm_monitored__plugins_dir }}/check_postgres.pl"
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Installing check_postgres to Nagios plugin directory
+      command: "perl {{ hm_monitored__plugins_dir }}/check_postgres.pl --symlinks"
+      args:
+        creates: "{{ hm_monitored__plugins_dir }}/check_postgres_connection"
+        chdir: "{{ hm_monitored__plugins_dir }}"
+
+    - name: Plugin post-installation cleanup
+      file:
+        path: /tmp/check_postgres
+        state: absent
+
+  when: '"servers_monitored" in group_names and not reg_find_checkpostgres.matched'
