@@ -21,7 +21,7 @@ echo "+-------------------------------------------------------------------------
 # Common checks
 #
 {{ hm_monitored__plugins_dir }}/check_postgres_hitratio --dbuser={{ hm_pgsql__monitoring_user }} {{ snippet_cleanup }}
-{{ hm_monitored__plugins_dir }}/check_postgres_query_time --dbuser={{ hm_pgsql__monitoring_user }} --warning='3 minutes' --critical='5 minutes' {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_query_time --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_query_time.w }}' --critical='{{ hm_pgsql__checks.check_postgres_query_time.w }}' {{ snippet_cleanup }}
 
 {% for dbname in hm_pgsql__databases %}
 #
@@ -29,9 +29,9 @@ echo "+-------------------------------------------------------------------------
 #
 {{ hm_monitored__plugins_dir }}/check_postgres_connection --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} {{ snippet_cleanup }}
 {{ hm_monitored__plugins_dir }}/check_postgres_backends --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} {{ snippet_cleanup }}
-{{ hm_monitored__plugins_dir }}/check_postgres_bloat --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='1G' --critical='5G' {{ snippet_cleanup }}
-{{ hm_monitored__plugins_dir }}/check_postgres_last_analyze --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='3d' --critical='7d' {{ snippet_cleanup }}
-{{ hm_monitored__plugins_dir }}/check_postgres_last_vacuum --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='3d' --critical='7d'  {{ snippet_cleanup }}
-{{ hm_monitored__plugins_dir }}/check_postgres_last_autoanalyze --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='3d' --critical='7d' {{ snippet_cleanup }}
-{{ hm_monitored__plugins_dir }}/check_postgres_last_autovacuum --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='3d' --critical='7d' {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_bloat --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_bloat.w }}' --critical='{{ hm_pgsql__checks.check_postgres_bloat.c }}' {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_last_analyze --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_last_analyze.w }}' --critical='{{ hm_pgsql__checks.check_postgres_last_analyze.c }}' --exclude='pg_catalog.' {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_last_vacuum --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_last_vacuum.w }}' --critical='{{ hm_pgsql__checks.check_postgres_last_vacuum.c }}' --exclude='pg_catalog.' {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_last_autoanalyze --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_last_autoanalyze.w }}' --critical='{{ hm_pgsql__checks.check_postgres_last_autoanalyze.c }}' --exclude='pg_catalog.' {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_last_autovacuum --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_last_autovacuum.w }}' --critical='{{ hm_pgsql__checks.check_postgres_last_autovacuum.c }}' --exclude='pg_catalog.' {{ snippet_cleanup }}
 {% endfor %}

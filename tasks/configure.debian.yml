@@ -28,8 +28,9 @@
 
   #
   # Resources for following section:
-  #   https://bucardo.org/check_postgres/check_postgres.pl.html
   #   https://severalnines.com/database-blog/how-monitor-postgresql-using-nagios
+  #   https://bucardo.org/check_postgres/check_postgres.pl.html
+  #   https://github.com/OPMDG/check_pgactivity
   #
   - name: Database monitoring - Configuring Nagios monitoring
     template:

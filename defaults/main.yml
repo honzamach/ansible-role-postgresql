@@ -111,6 +111,29 @@ hm_pgsql__procs_mincnt: 1
 #
 hm_pgsql__procs_maxcnt: 100
 
+#
+# Configurations for various Nagios check warning and critical thresholds.
+#
+hm_pgsql__checks:
+  check_postgres_query_time:
+    w: 2 minutes
+    c: 5 minutes
+  check_postgres_bloat:
+    w: 1G
+    c: 5G
+  check_postgres_last_analyze:
+    w: 3d
+    c: 7d
+  check_postgres_last_vacuum:
+    w: 3d
+    c: 7d
+  check_postgres_last_autoanalyze:
+    w: 3d
+    c: 7d
+  check_postgres_last_autovacuum:
+    w: 3d
+    c: 7d
+
 #-------------------------------------------------------------------------------
 
 #
