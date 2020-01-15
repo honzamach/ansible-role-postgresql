@@ -6,7 +6,7 @@
 #  changes will be overwritten without any notice !!! You have been warned !!!
 #
 #----------------------- <+++ansible-managed-file+++> -------------------------+
-{%- set snippet_cleanup = " | sed 's/:/ -/' | cut -f 1 -d \\|;" %}
+{%- set snippet_cleanup = "| sed 's/:/ -/' | cut -f 1 -d \\|;" %}
 
 echo "+------------------------------------------------------------------------------+"
 echo "| PostgreSQL database status                                                   |"
