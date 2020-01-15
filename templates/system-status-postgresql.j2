@@ -29,9 +29,10 @@ echo "+-------------------------------------------------------------------------
 # Checks for database '{{ dbname }}'.
 #
 {{ hm_monitored__plugins_dir }}/check_postgres_connection --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} {{ snippet_cleanup }}
-{{ hm_monitored__plugins_dir }}/check_postgres_bloat --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_bloat.w }}' --critical='{{ hm_pgsql__checks.check_postgres_bloat.c }}' {{ snippet_cleanup }}
-{{ hm_monitored__plugins_dir }}/check_postgres_last_analyze --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_last_analyze.w }}' --critical='{{ hm_pgsql__checks.check_postgres_last_analyze.c }}' --exclude='pg_catalog.' {{ snippet_cleanup }}
-{{ hm_monitored__plugins_dir }}/check_postgres_last_vacuum --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_last_vacuum.w }}' --critical='{{ hm_pgsql__checks.check_postgres_last_vacuum.c }}' --exclude='pg_catalog.' {{ snippet_cleanup }}
-{{ hm_monitored__plugins_dir }}/check_postgres_last_autoanalyze --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_last_autoanalyze.w }}' --critical='{{ hm_pgsql__checks.check_postgres_last_autoanalyze.c }}' --exclude='pg_catalog.' {{ snippet_cleanup }}
-{{ hm_monitored__plugins_dir }}/check_postgres_last_autovacuum --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_last_autovacuum.w }}' --critical='{{ hm_pgsql__checks.check_postgres_last_autovacuum.c }}' --exclude='pg_catalog.' {{ snippet_cleanup }}
+{% for check in ['check_postgres_bloat', 'check_postgres_last_analyze', 'check_postgres_last_vacuum', 'check_postgres_last_autoanalyze', 'check_postgres_last_autovacuum'] %}
+{% set thresholds = hm_pgsql__checks[check][dbname]|default(hm_pgsql__checks[check]) %}
+{% if thresholds is mapping %}
+{{ hm_monitored__plugins_dir }}/{{ check }} --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ thresholds.w }}' --critical='{{ thresholds.c }}' --exclude='pg_catalog.' --exclude='alembic_version' {{ snippet_cleanup }}
+{% endif %}
+{% endfor %}
 {% endfor %}
