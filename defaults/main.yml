@@ -122,11 +122,17 @@ hm_pgsql__procs_maxcnt: 100
 #
 hm_pgsql__checks:
   check_postgres_query_time:
-    w: 2 minutes
-    c: 5 minutes
+    w: 1 minutes
+    c: 3 minutes
   check_postgres_bloat:
     w: 1G
     c: 5G
+    mentat_events:
+      w: 8G
+      c: 14G
+    mentat_main:
+      w: 256M
+      c: 2G
   check_postgres_last_analyze:
     w: 3d
     c: 7d
@@ -134,9 +140,11 @@ hm_pgsql__checks:
     w: 3d
     c: 7d
   check_postgres_last_autoanalyze:
+    mentat_main: NULL
     w: 3d
     c: 7d
   check_postgres_last_autovacuum:
+    mentat_main: NULL
     w: 3d
     c: 7d
 
