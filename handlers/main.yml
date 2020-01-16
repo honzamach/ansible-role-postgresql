@@ -9,3 +9,8 @@
   service:
     name: "{{ hm_monitored__service_name }}"
     state: restarted
+
+- name: Restart Telegraf service
+  service:
+    name: telegraf
+    state: restarted

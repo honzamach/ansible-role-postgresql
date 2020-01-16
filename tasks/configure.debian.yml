@@ -153,3 +153,25 @@
       - Restart PostgreSQL service
 
   when: '"servers_monitored" in group_names'
+
+- block:
+
+  - name: Griffin monitoring - Configuring Telegraf
+    template:
+      src: "{{ item }}"
+      dest: /etc/telegraf/telegraf.d/postgresql.conf
+      owner: root
+      group: root
+      mode: 0755
+    with_first_found:
+      - "inventory/host_files/{{ inventory_hostname }}/honzamach.postgresql/telegraf_postgresql.conf.j2"
+      - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/telegraf_postgresql.conf.{{ ansible_lsb['codename'] }}.j2"
+      - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/telegraf_postgresql.conf.j2"
+      - "inventory/group_files/servers/honzamach.postgresql/telegraf_postgresql.conf.{{ ansible_lsb['codename'] }}.j2"
+      - "inventory/group_files/servers/honzamach.postgresql/telegraf_postgresql.conf.j2"
+      - "telegraf_postgresql.conf.{{ ansible_lsb['codename'] }}.j2"
+      - "telegraf_postgresql.conf.j2"
+    notify:
+      - Restart Telegraf service
+
+  when: '"servers_griffin_watchee" in group_names'
