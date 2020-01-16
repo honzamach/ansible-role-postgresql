@@ -141,4 +141,15 @@
     notify:
       - Restart PostgreSQL service
 
+  - name: "Database monitoring - Enable localhost login for user '{{ hm_pgsql__monitoring_user }}'"
+    postgresql_pg_hba:
+      dest: "/etc/postgresql/{{ hm_pgsql__major_version }}/main/pg_hba.conf"
+      contype: host
+      users: "{{ hm_pgsql__monitoring_user }}"
+      method: md5
+      address: localhost
+      backup: yes
+    notify:
+      - Restart PostgreSQL service
+
   when: '"servers_monitored" in group_names'
