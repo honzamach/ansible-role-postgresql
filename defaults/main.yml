@@ -32,7 +32,6 @@ hm_pgsql__remove_list:
   - postgresql-11-ip4r
   - postgresql-client-11
   - postgresql-server-dev-11
-  - pgadmin3
 
 #
 # Remove previous version of PostgreSQL database (true/false).
@@ -48,7 +47,6 @@ hm_pgsql__package_list:
   - "postgresql-client-{{ hm_pgsql__major_version }}"
   - "postgresql-server-dev-{{ hm_pgsql__major_version }}"
   - "libpq-dev"
-  - "pgadmin4"
   - "python-ipaddress"
   - "python-psycopg2"
   - "python3-psycopg2"
