@@ -15,8 +15,9 @@ command[check_postgresql]={{ hm_monitored__plugins_dir }}/check_procs -c {{ hm_p
 #
 # Common checks
 #
-{{ hm_monitored__plugins_dir }}/check_postgres_hitratio --dbuser={{ hm_pgsql__monitoring_user }}
-{{ hm_monitored__plugins_dir }}/check_postgres_query_time --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_query_time.w }}' --critical='{{ hm_pgsql__checks.check_postgres_query_time.w }}'
+command[check_pg_hitratio]={{ hm_monitored__plugins_dir }}/check_postgres_hitratio --dbuser={{ hm_pgsql__monitoring_user }}
+command[check_pg_querytime]={{ hm_monitored__plugins_dir }}/check_postgres_query_time --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_query_time.w }}' --critical='{{ hm_pgsql__checks.check_postgres_query_time.w }}'
+command[check_pg_backends]={{ hm_monitored__plugins_dir }}/check_postgres_backends --dbuser={{ hm_pgsql__monitoring_user }}
 {% for dbname in hm_pgsql__databases %}
 
 {%- set dbid = dbname | replace('-', '_') %}
