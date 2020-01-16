@@ -25,10 +25,10 @@ command[check_pg_backends]={{ hm_monitored__plugins_dir }}/check_postgres_backen
 # Checks for database '{{ dbname }}'.
 #
 command[check_pg_con_{{ dbid }}]={{ hm_monitored__plugins_dir }}/check_postgres_connection --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }}
-command[check_pg_bck_{{ dbid }}]={{ hm_monitored__plugins_dir }}/check_postgres_backends --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }}
-command[check_pg_blt_{{ dbid }}]={{ hm_monitored__plugins_dir }}/check_postgres_bloat --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_bloat.w }}' --critical='{{ hm_pgsql__checks.check_postgres_bloat.c }}'
-command[check_pg_anl_{{ dbid }}]={{ hm_monitored__plugins_dir }}/check_postgres_last_analyze --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_last_analyze.w }}' --critical='{{ hm_pgsql__checks.check_postgres_last_analyze.c }}' --exclude='pg_catalog.'
-command[check_pg_vac_{{ dbid }}]={{ hm_monitored__plugins_dir }}/check_postgres_last_vacuum --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_last_vacuum.w }}' --critical='{{ hm_pgsql__checks.check_postgres_last_vacuum.c }}' --exclude='pg_catalog.'
-command[check_pg_aan_{{ dbid }}]={{ hm_monitored__plugins_dir }}/check_postgres_last_autoanalyze --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_last_autoanalyze.w }}' --critical='{{ hm_pgsql__checks.check_postgres_last_autoanalyze.c }}' --exclude='pg_catalog.'
-command[check_pg_ava_{{ dbid }}]={{ hm_monitored__plugins_dir }}/check_postgres_last_autovacuum --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_last_autovacuum.w }}' --critical='{{ hm_pgsql__checks.check_postgres_last_autovacuum.c }}' --exclude='pg_catalog.'
+{% for check in [['check_postgres_bloat', 'blt'], ['check_postgres_last_analyze', 'anl'], ['check_postgres_last_vacuum', 'vac'], ['check_postgres_last_autoanalyze', 'aan'], ['check_postgres_last_autovacuum', 'ava']] %}
+{% set thresholds = hm_pgsql__checks[check[0]][dbname]|default(hm_pgsql__checks[check[0]]) %}
+{% if thresholds is mapping %}
+command[check_pg_{{ check[1] }}_{{ dbid }}]={{ hm_monitored__plugins_dir }}/{{ check }} --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ thresholds.w }}' --critical='{{ thresholds.c }}' --exclude='pg_catalog.' --exclude='alembic_version'
+{% endif %}
+{% endfor %}
 {% endfor %}
