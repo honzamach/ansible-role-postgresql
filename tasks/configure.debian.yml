@@ -1,5 +1,12 @@
 ---
 
+- name: "User 'postgres': Adding access to SSL certificates"
+  user:
+    name: postgres
+    groups: ssl-cert
+    append: yes
+  when: '"servers_certified" in group_names'
+
 - name: Configuring log file rotation
   template:
     src: "{{ item }}"
