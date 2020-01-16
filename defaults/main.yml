@@ -37,7 +37,7 @@ hm_pgsql__remove_list:
 #
 # Remove previous version of PostgreSQL database (true/false).
 #
-hm_pgsql__apt_remove_previous: false
+hm_pgsql__remove_previous: false
 
 #
 # List of role-related packages, that will be installed on target system.

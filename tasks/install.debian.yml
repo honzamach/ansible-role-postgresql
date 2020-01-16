@@ -17,7 +17,7 @@
   apt:
     name: "{{ hm_pgsql__remove_list }}"
     state: absent
-  when: hm_pgsql__apt_remove_previous
+  when: hm_pgsql__remove_previous
 
 - name: Installing PostgreSQL related packages
   apt:

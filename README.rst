@@ -82,7 +82,7 @@ that can be overriden and adjusted as needed:
 	* *Datatype:* ``list of strings``
 	* *Default:* (please see YAML file ``defaults/main.yml``)
 
-.. envvar:: hm_pgsql__apt_remove_previous
+.. envvar:: hm_pgsql__remove_previous
 
 	Remove previous version of PostgreSQL database (true/false).
 
