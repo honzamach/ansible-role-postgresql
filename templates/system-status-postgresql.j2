@@ -6,33 +6,36 @@
 #  changes will be overwritten without any notice !!! You have been warned !!!
 #
 #----------------------- <+++ansible-managed-file+++> -------------------------+
-{%- set snippet_cleanup = "| sed 's/:/ -/' | cut -f 1 -d \\|;" %}
+{%- set snippet_pprocess = "| sed 's/:/ -/' | cut -f 1 -d \\| | nrpe_status_colorize \"${MSMS_FLAG_COLOR}\"" %}
 
-echo "+------------------------------------------------------------------------------+"
-echo "| PostgreSQL database status                                                   |"
-echo "+------------------------------------------------------------------------------+"
+# Load shared library.
+. /opt/msms/lib/libmsms.sh
+
+
+widget_separator_text "POSTGRESQL DATABASE" "${MSMS_SEPARATOR_GLYPH}" "${MSMS_SEPARATOR_PAD}" "${MSMS_FLAG_COLOR}" "${MSMS_WIDGET_WIDTH}"
+
 
 #
 # Check running processes.
 #
-{{ hm_monitored__plugins_dir }}/check_procs -c {{ hm_pgsql__procs_mincnt }}:{{ hm_pgsql__procs_maxcnt }} -C {{ hm_pgsql__process_name }} {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_procs -c {{ hm_pgsql__procs_mincnt }}:{{ hm_pgsql__procs_maxcnt }} -C {{ hm_pgsql__process_name }} {{ snippet_pprocess }}
 
 #
 # Common checks
 #
-{{ hm_monitored__plugins_dir }}/check_postgres_hitratio --dbuser={{ hm_pgsql__monitoring_user }} {{ snippet_cleanup }}
-{{ hm_monitored__plugins_dir }}/check_postgres_query_time --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_query_time.w }}' --critical='{{ hm_pgsql__checks.check_postgres_query_time.c }}' {{ snippet_cleanup }}
-{{ hm_monitored__plugins_dir }}/check_postgres_backends --dbuser={{ hm_pgsql__monitoring_user }} {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_hitratio --dbuser={{ hm_pgsql__monitoring_user }} {{ snippet_pprocess }}
+{{ hm_monitored__plugins_dir }}/check_postgres_query_time --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ hm_pgsql__checks.check_postgres_query_time.w }}' --critical='{{ hm_pgsql__checks.check_postgres_query_time.c }}' {{ snippet_pprocess }}
+{{ hm_monitored__plugins_dir }}/check_postgres_backends --dbuser={{ hm_pgsql__monitoring_user }} {{ snippet_pprocess }}
 
 {% for dbname in hm_pgsql__databases %}
 #
 # Checks for database '{{ dbname }}'.
 #
-{{ hm_monitored__plugins_dir }}/check_postgres_connection --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/check_postgres_connection --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} {{ snippet_pprocess }}
 {% for check in ['check_postgres_bloat', 'check_postgres_last_analyze', 'check_postgres_last_vacuum', 'check_postgres_last_autoanalyze', 'check_postgres_last_autovacuum'] %}
 {% set thresholds = hm_pgsql__checks[check][dbname]|default(hm_pgsql__checks[check]) %}
 {% if thresholds is mapping %}
-{{ hm_monitored__plugins_dir }}/{{ check }} --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ thresholds.w }}' --critical='{{ thresholds.c }}' --exclude='pg_catalog.' --exclude='alembic_version' {{ snippet_cleanup }}
+{{ hm_monitored__plugins_dir }}/{{ check }} --dbname={{ dbname }} --dbuser={{ hm_pgsql__monitoring_user }} --warning='{{ thresholds.w }}' --critical='{{ thresholds.c }}' --exclude='pg_catalog.' --exclude='alembic_version' {{ snippet_pprocess }}
 {% endif %}
 {% endfor %}
 {% endfor %}
