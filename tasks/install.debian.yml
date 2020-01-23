@@ -32,6 +32,15 @@
     use_regex: yes
   register: reg_find_checkpostgres
 
+- name: "Installing custom PostgreSQL log file monitoring script"
+  copy:
+    src: "check_postgres_log"
+    dest: "{{ hm_monitored__plugins_dir }}/check_postgres_log"
+    owner: root
+    group: root
+    mode: '0755'
+  when: '"servers_monitored" in group_names'
+
 - block:
 
     - name: Create temporary directory

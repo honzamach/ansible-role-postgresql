@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Variables
+LOG_FILE="${1:-/var/log/postgresql/postgresql-12-main.log}"
+CURRENT_DATE=$(date +'%Y-%m-%d %H')
+
+COUNT_WARNING=$(grep "$CURRENT_DATE" $LOG_FILE | grep "WARNING" | wc -l)
+COUNT_ERROR=$(grep "$CURRENT_DATE" $LOG_FILE | grep "ERROR" | wc -l)
+COUNT_FATAL=$(grep "$CURRENT_DATE" $LOG_FILE | grep "FATAL" | wc -l)
+COUNT_PANIC=$(grep "$CURRENT_DATE" $LOG_FILE | grep "PANIC" | wc -l)
+
+# NRPE plugin states
+STATE_UNKNOWN=3
+STATE_CRITICAL=2
+STATE_WARNING=1
+STATE_OK=0
+
+# Perform check
+if [ $COUNT_PANIC -ne 0 ] || [ $COUNT_FATAL -ne 0 ]; then
+    echo "POSTGRES_LOG CRITICAL - Check PostgreSQL log file, found FATAL or PANIC level errors (P:${COUNT_PANIC};F:${COUNT_FATAL};E:${COUNT_ERROR};W:${COUNT_WARNING})"
+    exit $STATE_CRITICAL
+elif [ $COUNT_ERROR -ne 0 ] || [ $COUNT_WARNING -ne 0 ]; then
+	echo "POSTGRES_LOG WARNING - Check PostgreSQL log file, found ERROR or WARNING level errors (E:${COUNT_ERROR};W:${COUNT_WARNING})"
+    exit $STATE_CRITICAL
+else
+    echo "POSTGRES_LOG OK - PostgreSQL without errors during this hour so far"
+    exit $STATE_OK
+fi

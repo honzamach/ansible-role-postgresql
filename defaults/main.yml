@@ -87,6 +87,11 @@ hm_pgsql__databases: []
 hm_pgsql__logdir: "/var/log/postgresql"
 
 #
+# Path to log file.
+#
+hm_pgsql__logfile: "{{ hm_pgsql__logdir }}/postgresql-{{ hm_pgsql__major_version }}-main.log"
+
+#
 # Log rotation switch (true/false).
 #
 hm_pgsql__logrotate: true
@@ -120,8 +125,8 @@ hm_pgsql__procs_maxcnt: 100
 #
 hm_pgsql__checks:
   check_postgres_query_time:
-    w: 1 minutes
-    c: 3 minutes
+    w: 5 minutes
+    c: 10 minutes
   check_postgres_bloat:
     w: 1G
     c: 5G
