@@ -1,104 +1,57 @@
 ---
 
-#
-# URL leading to GPG key for signing deb packages
-#
 hm_pgsql__apt_key_url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
 
-#
-# Identifier of the signing key
-#
 hm_pgsql__apt_key_id: ACCC4CF8
 
-#
-# Location of PostgreSQL repository.
-#
 hm_pgsql__apt_repository: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_lsb['codename'] }}-pgdg main"
 
-#
-# List of role-related packages, that will be removed from target system.
-#
 hm_pgsql__major_version: "12"
 
-#
-# List of role-related packages, that will be removed from target system.
-#
-hm_pgsql__remove_list:
-  - postgresql-10
-  - postgresql-10-ip4r
-  - postgresql-client-10
-  - postgresql-server-dev-10
-  - postgresql-11
-  - postgresql-11-ip4r
-  - postgresql-client-11
-  - postgresql-server-dev-11
+hm_pgsql__remove_packages:
+  debian:
+    apt:
+      - postgresql-10
+      - postgresql-10-ip4r
+      - postgresql-client-10
+      - postgresql-server-dev-10
+      - postgresql-11
+      - postgresql-11-ip4r
+      - postgresql-client-11
+      - postgresql-server-dev-11
 
-#
-# Remove previous version of PostgreSQL database (true/false).
-#
 hm_pgsql__remove_previous: false
 
-#
-# List of role-related packages, that will be installed on target system.
-#
-hm_pgsql__package_list:
-  - "postgresql-{{ hm_pgsql__major_version }}"
-  - "postgresql-{{ hm_pgsql__major_version }}-ip4r"
-  - "postgresql-client-{{ hm_pgsql__major_version }}"
-  - "postgresql-server-dev-{{ hm_pgsql__major_version }}"
-  - "libpq-dev"
-  - "python-ipaddress"
-  - "python-psycopg2"
-  - "python3-psycopg2"
-
-#
-# Force APT cache update before installing any packages ('yes','no').
-#
 hm_pgsql__apt_force_update: no
 
-#
-# Name of the UNIX system user for PostgreSQL database.
-#
+hm_pgsql__install_packages:
+  debian:
+    apt:
+      - "postgresql-{{ hm_pgsql__major_version }}"
+      - "postgresql-{{ hm_pgsql__major_version }}-ip4r"
+      - "postgresql-client-{{ hm_pgsql__major_version }}"
+      - "postgresql-server-dev-{{ hm_pgsql__major_version }}"
+      - "libpq-dev"
+      - "python-ipaddress"
+      - "python-psycopg2"
+      - "python3-psycopg2"
+
 hm_pgsql__user: postgres
 
-#
-# Name of the UNIX system group for PostgreSQL database.
-#
 hm_pgsql__group: postgres
 
-#
-# Name of the user account for monitoring PostgreSQL database.
-#
 hm_pgsql__monitoring_user: watchdog
 
-#
-# Password of the user account for monitoring PostgreSQL database.
-#
 hm_pgsql__monitoring_password: watchdog
 
-#
-# List of all PostgreSQL databases that should be present on target system.
-#
 hm_pgsql__databases: []
 
-#
-# Path to log file.
-#
 hm_pgsql__logdir: "/var/log/postgresql"
 
-#
-# Path to log file.
-#
 hm_pgsql__logfile: "{{ hm_pgsql__logdir }}/postgresql-{{ hm_pgsql__major_version }}-main.log"
 
-#
-# Log rotation switch (true/false).
-#
 hm_pgsql__logrotate: true
 
-#
-# Log rotation options.
-#
 hm_pgsql__logrotate_options:
   - weekly
   - rotate 8
@@ -110,19 +63,10 @@ hm_pgsql__logrotate_options:
   - dateext
   - su root root
 
-#
-# Minimal number of running PostgreSQL processes for health monitoring.
-#
 hm_pgsql__procs_mincnt: 1
 
-#
-# Maximal number of running PostgreSQL processes for health monitoring.
-#
 hm_pgsql__procs_maxcnt: 100
 
-#
-# Configurations for various Nagios check warning and critical thresholds.
-#
 hm_pgsql__checks:
   check_postgres_query_time:
     w: 5 minutes

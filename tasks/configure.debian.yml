@@ -57,22 +57,6 @@
       - "nrpe_postgresql.cfg.j2"
     notify: Restart NRPE service
 
-  - name: Database monitoring - Configuring system status script
-    template:
-      src: "{{ item }}"
-      dest: /opt/system-status/system-status.d/20-postgresql
-      owner: root
-      group: root
-      mode: 0755
-    with_first_found:
-      - "inventory/host_files/{{ inventory_hostname }}/honzamach.postgresql/system-status-postgresql.j2"
-      - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/system-status-postgresql.{{ ansible_lsb['codename'] }}.j2"
-      - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/system-status-postgresql.j2"
-      - "inventory/group_files/servers/honzamach.postgresql/system-status-postgresql.{{ ansible_lsb['codename'] }}.j2"
-      - "inventory/group_files/servers/honzamach.postgresql/system-status-postgresql.j2"
-      - "system-status-postgresql.{{ ansible_lsb['codename'] }}.j2"
-      - "system-status-postgresql.j2"
-
   #
   # Resources for following section:
   #   https://gist.github.com/jirutka/afa3ce62b1430abf7572#file-pg_grant_read_to_db-sh
@@ -153,6 +137,23 @@
       - Restart PostgreSQL service
 
   when: '"servers_monitored" in group_names'
+
+- name: Database monitoring - Configuring system status script
+  template:
+    src: "{{ item }}"
+    dest: /opt/system-status/system-status.d/20-postgresql
+    owner: root
+    group: root
+    mode: 0755
+  with_first_found:
+    - "inventory/host_files/{{ inventory_hostname }}/honzamach.postgresql/system-status-postgresql.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/system-status-postgresql.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.postgresql/system-status-postgresql.j2"
+    - "inventory/group_files/servers/honzamach.postgresql/system-status-postgresql.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers/honzamach.postgresql/system-status-postgresql.j2"
+    - "system-status-postgresql.{{ ansible_lsb['codename'] }}.j2"
+    - "system-status-postgresql.j2"
+  when: '"servers_commonenv" in group_names'
 
 - block:
 

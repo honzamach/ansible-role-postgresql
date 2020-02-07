@@ -15,13 +15,13 @@
 
 - name: Removing PostgreSQL related packages
   apt:
-    name: "{{ hm_pgsql__remove_list }}"
+    name: "{{ hm_pgsql__remove_packages[ansible_os_family|lower]['apt'] }}"
     state: absent
   when: hm_pgsql__remove_previous
 
 - name: Installing PostgreSQL related packages
   apt:
-    name: "{{ hm_pgsql__package_list }}"
+    name: "{{ hm_pgsql__install_packages[ansible_os_family|lower]['apt'] }}"
     state: latest
     update_cache: "{{ hm_pgsql__apt_force_update }}"
 
