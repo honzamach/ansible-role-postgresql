@@ -31,6 +31,37 @@
     state: started
     enabled: yes
 
+#------------------------------------------------------------------------------
+
+- block:
+
+    - name: "PostgreSQL: Creating admin users"
+      become: yes
+      become_user: "{{ hm_pgsql__user }}"
+      postgresql_user:
+        db: "postgres"
+        login_user: "{{ hm_pgsql__user }}"
+        name: "{{ item.key }}"
+        priv: ALL
+        role_attr_flags: "SUPERUSER,CREATEROLE,CREATEDB"
+        state: present
+      loop: "{{ hm_accounts__users | default({}) | dict2items }}"
+      when: "'is_admin_postgresql' in item.value and item.value.is_admin_postgresql"
+
+    - name: "PostgreSQL: Granting passwordless local access to admin users"
+      postgresql_pg_hba:
+        dest: "/etc/postgresql/{{ hm_pgsql__major_version }}/main/pg_hba.conf"
+        contype: local
+        method: peer
+        users: "{{ item.key }}"
+        state: present
+      loop: "{{ hm_accounts__users | default({}) | dict2items }}"
+      when: "'is_admin_postgresql' in item.value and item.value.is_admin_postgresql"
+
+  when: "hm_accounts__users is defined and hm_accounts__users and hm_accounts__users|length > 0"
+
+#------------------------------------------------------------------------------
+
 - block:
 
   #

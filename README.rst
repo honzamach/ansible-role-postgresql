@@ -295,6 +295,24 @@ Foreign variables
 
 This role uses following foreign variables defined in other roles:
 
+:envvar:`hm_accounts__users`
+
+    You may flag certain users as administrators of this PostgreSQL database and
+    superuser accounts will be created for them in database and ``peer`` level
+    authentication access will be configured. Use flag ``is_admin_postgresql: true``
+    as property of an account.
+
+    * *Example:*
+
+    .. code-block:: yaml
+
+        hm_accounts__users:
+          user:
+            is_admin_postgresql: true
+          ...
+
+
+
 :envvar:`hm_monitored__service_name`
 
     Name of the NRPE service in case the server is in **servers_monitored**
