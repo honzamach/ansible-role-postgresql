@@ -6,7 +6,7 @@ hm_pgsql__apt_key_id: ACCC4CF8
 
 hm_pgsql__apt_repository: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_lsb['codename'] }}-pgdg main"
 
-hm_pgsql__major_version: "12"
+hm_pgsql__major_version: "13"
 
 hm_pgsql__remove_packages:
   debian:
@@ -19,6 +19,10 @@ hm_pgsql__remove_packages:
       - postgresql-11-ip4r
       - postgresql-client-11
       - postgresql-server-dev-11
+      - postgresql-12
+      - postgresql-12-ip4r
+      - postgresql-client-12
+      - postgresql-server-dev-12
 
 hm_pgsql__remove_previous: false
 
